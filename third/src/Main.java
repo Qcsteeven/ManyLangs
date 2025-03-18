@@ -8,7 +8,7 @@ import java.util.Set;
 
 public class Main {
 
-    // Метод для получения  подстрок
+    // Метод для получения подстрок
     public static List<String> getSubstrings(String text) {
         List<String> result = new ArrayList<>();
         for (int len = 2; len <= 6; len++) {
@@ -43,9 +43,9 @@ public class Main {
     public static String findMaxCommon(String s1, String s2) {
         String maxCommon = "";
         for (int i = 0; i < s1.length(); i++) {
-            for (int j = i + 1; j <= s1.length(); j++) {
+            for (int j = i + maxCommon.length(); j <= s1.length(); j++) {
                 String sub = s1.substring(i, j);
-                if (s2.contains(sub) && sub.length() > maxCommon.length()) {
+                if (s2.contains(sub)) {
                     maxCommon = sub;
                 } else {
                     break;
@@ -53,6 +53,39 @@ public class Main {
             }
         }
         return maxCommon;
+    }
+
+    // Метод для поиска уникальных подстрок в первой строке, отсутствующих во второй
+    public static Set<String> findUniqueInFirst(List<String> subs1, List<String> subs2) {
+        Set<String> unique = new HashSet<>();
+        for (String sub : subs1) {
+            if (!subs2.contains(sub)) {
+                unique.add(sub);
+            }
+        }
+        return unique;
+    }
+
+    // Метод для поиска общих подстрок между двумя списками
+    public static Set<String> findCommon(List<String> subs1, List<String> subs2) {
+        Set<String> common = new HashSet<>();
+        for (String sub : subs1) {
+            if (subs2.contains(sub)) {
+                common.add(sub);
+            }
+        }
+        return common;
+    }
+
+    // Метод для поиска подстрок в первой строке, отсутствующих во второй и третьей
+    public static Set<String> findMissingInSecondAndThird(List<String> subs1, List<String> subs2, List<String> subs3) {
+        Set<String> missing = new HashSet<>();
+        for (String sub : subs1) {
+            if (!subs2.contains(sub) && !subs3.contains(sub)) {
+                missing.add(sub);
+            }
+        }
+        return missing;
     }
 
     public static void main(String[] args) {
@@ -66,43 +99,13 @@ public class Main {
         List<String> subs2 = getSubstrings(dna2);
         List<String> subs3 = getSubstrings(dna3);
 
-        // Создание множеств для хранения уникальных и общих подстрок
-        Set<String> unique1 = new HashSet<>();
-        Set<String> unique2 = new HashSet<>();
-        Set<String> unique3 = new HashSet<>();
-        Set<String> common12 = new HashSet<>();
-        Set<String> missingIn23 = new HashSet<>();
-
-        // Поиск уникальных подстрок для dna1, которые отсутствуют в dna2
-        // и общих подстрок для dna1 и dna2
-        for (String sub : subs1) {
-            if (!subs2.contains(sub)) {
-                unique1.add(sub);
-            } else {
-                common12.add(sub);
-            }
-        }
-
-        // Поиск уникальных подстрок для dna2, которые отсутствуют в dna1
-        for (String sub : subs2) {
-            if (!subs1.contains(sub)) {
-                unique2.add(sub);
-            }
-        }
-
-        // Поиск уникальных подстрок для dna3, которые отсутствуют в dna1 и dna2
-        for (String sub : subs3) {
-            if (!subs1.contains(sub) && !subs2.contains(sub)) {
-                unique3.add(sub);
-            }
-        }
-
-        // Поиск подстрок из dna1, которые отсутствуют в dna2 и dna3
-        for (String sub : subs1) {
-            if (!subs2.contains(sub) && !subs3.contains(sub)) {
-                missingIn23.add(sub);
-            }
-        }
+        // Поиск уникальных и общих подстрок
+        Set<String> unique1 = findUniqueInFirst(subs1, subs2);
+        Set<String> unique2 = findUniqueInFirst(subs2, subs1);
+        Set<String> common12 = findCommon(subs1, subs2);
+        Set<String> unique3 = findUniqueInFirst(subs3, subs1);
+        unique3.removeAll(subs2); // Убираем подстроки, которые есть в dna2
+        Set<String> missingIn23 = findMissingInSecondAndThird(subs1, subs2, subs3);
 
         // Нахождение минимальной по длине подстроки в каждом множестве
         String minUnique1 = findMin(unique1);
@@ -125,5 +128,4 @@ public class Main {
         System.out.println("Макс. общая подпоследовательность для 1 и 3: " + maxCommon13);
         System.out.println("Соотношение длины общей подпоследовательности к длине 1: " + ratio);
     }
-
 }
