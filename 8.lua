@@ -1,3 +1,7 @@
+function div(a, b)
+    return string.format("%.2f поделить на %.2f равно %.2f", a, b, a / b)
+end
+
 function zero_protector(func)
     return function(a, b)
         if b == 0 then
@@ -5,10 +9,6 @@ function zero_protector(func)
         end
         return func(a, b)
     end
-end
-
-function div(a, b)
-    return string.format("%.2f поделить на %.2f равно %.2f", a, b, a / b)
 end
 
 log = {}
